@@ -1,0 +1,78 @@
+name: Acceptance on PR
+
+on:
+  pull_request:
+    branches:
+      - dev
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - edited
+
+jobs:
+  acceptance:
+    runs-on: ubuntu-latest
+    env:
+      ACCEPTANCE_BASE_URL: http://localhost:3000
+      ACCEPTANCE_API_URL: http://localhost:4000
+      API_BASE_URL: http://localhost:4000
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Parse Jira ticket
+        id: ticket
+        shell: bash
+        run: |
+          source_text="${{ github.head_ref }} ${{ github.event.pull_request.title }}"
+          ticket="$(printf '%s' "$source_text" | grep -Eo '[A-Z][A-Z0-9]+-[0-9]+' | head -n 1 || true)"
+          if [ -z "$ticket" ]; then
+            echo "No Jira ticket ID found in branch name or PR title."
+            exit 1
+          fi
+          echo "id=$ticket" >> "$GITHUB_OUTPUT"
+
+      - name: Start API
+        run: npm run start:api &
+
+      - name: Start web
+        run: npm run dev:web &
+
+      - name: Wait for local app
+        shell: bash
+        run: |
+          for attempt in {1..60}; do
+            if curl --fail --silent "$ACCEPTANCE_BASE_URL" >/dev/null && \
+               curl --fail --silent --request POST "$ACCEPTANCE_API_URL/api/reset" >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Timed out waiting for the local acceptance app."
+          exit 1
+
+      - name: Agent planning note
+        shell: bash
+        run: |
+          if ! ls e2e/acceptance/specs/${{ steps.ticket.outputs.id }}-*.md >/dev/null 2>&1; then
+            echo "No acceptance plan exists for ${{ steps.ticket.outputs.id }}."
+            echo "Run the acceptance-planner agent, then acceptance-generator, before relying on this lane for new story coverage."
+          fi
+
+      - name: Run acceptance tests
+        run: npx playwright test --config=e2e/acceptance/playwright.config.ts
+
+      - name: Healer note on failure
+        if: failure()
+        run: |
+          echo "Acceptance failed. Run the acceptance-healer agent with Playwright CLI to repair allowed test drift before merging."
