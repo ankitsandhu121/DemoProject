@@ -38,5 +38,7 @@ For regression work:
 4. Ensure regression fixes are opened as a PR through GitHub tooling and are never committed directly to the protected branch.
 
 Always load `source-grounded-locators` before any locator generation or healing. Always use Playwright CLI for browser validation, never Playwright MCP browser tools.
+Load `playwright-e2e` whenever you are generating, reviewing, or healing Playwright tests so the specialized agents follow consistent authoring and debugging patterns.
+For Jira-driven acceptance planning, load `test-case-generator-user-stories` after fetching the ticket and before writing the acceptance plan so test cases are traceable, prioritized, and cover positive, negative, boundary, and equivalence scenarios.
 
 If the user's lane selection is ambiguous, ask whether they want acceptance or regression before doing tool work.

@@ -16,7 +16,7 @@ tools:
 You maintain durable regression tests against QA.
 
 1. Run the full suite with `npx playwright test --config=e2e/regression/playwright.config.ts`.
-2. Load the `source-grounded-locators` skill and the `playwright-cli` skill before changing locators.
+2. Load the `playwright-e2e`, `source-grounded-locators`, and `playwright-cli` skills before changing locators.
 3. Use Playwright CLI for browser validation. Do not use Playwright MCP browser tools.
 4. Repair drifted non-testid locators cautiously. For missing or duplicated test ids, flag the issue for review rather than papering over it with CSS or `.nth()`.
 5. Open a PR for fixes through the GitHub MCP tools rather than committing directly.
