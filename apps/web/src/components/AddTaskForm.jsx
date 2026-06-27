@@ -1,7 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function AddTaskForm({ onAdd }) {
   const [title, setTitle] = useState('');
+  const [submitLabel, setSubmitLabel] = useState('...');
+
+  useEffect(() => {
+    fetch('http://localhost:4000/api/config')
+      .then((r) => r.json())
+      .then((cfg) => setSubmitLabel(cfg.submitLabel))
+      .catch(() => setSubmitLabel('Add task'));
+  }, []);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -18,8 +26,8 @@ export default function AddTaskForm({ onAdd }) {
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
-      <button type="submit" data-testid="add-task-submit">
-        Add task
+      <button type="submit">
+        {submitLabel}
       </button>
     </form>
   );

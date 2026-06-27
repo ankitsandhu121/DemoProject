@@ -12,8 +12,8 @@
   "scripts": {
     "dev:web": "npm run dev --workspace=taskflow-web",
     "start:api": "npm run start --workspace=taskflow-api",
-    "test:acceptance": "playwright test --config=e2e/acceptance/playwright.config.ts",
-    "test:acceptance:ui": "playwright test --config=e2e/acceptance/playwright.config.ts --ui",
-    "test:regression": "playwright test --config=e2e/regression/playwright.config.ts"
+    "test:acceptance": "playwright test --config=e2e/acceptance/playwright.config.js",
+    "test:acceptance:ui": "playwright test --config=e2e/acceptance/playwright.config.js --ui",
+    "test:regression": "playwright test --config=e2e/regression/playwright.config.js"
   }
 }

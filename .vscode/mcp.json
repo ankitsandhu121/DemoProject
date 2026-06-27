@@ -1,72 +1,12 @@
 {
   "servers": {
-    "playwright-test": {
-      "type": "stdio",
+    "atlassian-rovo-mcp": {
       "command": "npx",
       "args": [
-        "playwright",
-        "run-test-mcp-server"
+        "-y",
+        "mcp-remote@latest",
+        "https://mcp.atlassian.com/v1/mcp/authv2"
       ]
-    },
-    "jira": {
-      "type": "stdio",
-      "command": "docker",
-      "args": [
-        "run",
-        "-i",
-        "--rm",
-        "-e",
-        "JIRA_URL",
-        "-e",
-        "JIRA_USERNAME",
-        "-e",
-        "JIRA_API_TOKEN",
-        "ghcr.io/sooperset/mcp-atlassian:latest"
-      ],
-      "env": {
-        "JIRA_URL": "${input:jira-url}",
-        "JIRA_USERNAME": "${input:jira-username}",
-        "JIRA_API_TOKEN": "${input:jira-api-token}"
-      }
-    },
-    "github": {
-      "type": "stdio",
-      "command": "docker",
-      "args": [
-        "run",
-        "-i",
-        "--rm",
-        "-e",
-        "GITHUB_PERSONAL_ACCESS_TOKEN",
-        "ghcr.io/github/github-mcp-server"
-      ],
-      "env": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": "${input:github-token}"
-      }
     }
-  },
-  "inputs": [
-    {
-      "id": "jira-url",
-      "type": "promptString",
-      "description": "Jira base URL, for example https://your-domain.atlassian.net"
-    },
-    {
-      "id": "jira-username",
-      "type": "promptString",
-      "description": "Jira account email"
-    },
-    {
-      "id": "jira-api-token",
-      "type": "promptString",
-      "description": "Jira API token",
-      "password": true
-    },
-    {
-      "id": "github-token",
-      "type": "promptString",
-      "description": "GitHub personal access token for the GitHub MCP server",
-      "password": true
-    }
-  ]
+  }
 }

@@ -8,7 +8,7 @@ TaskFlow is a small React and Node.js sample app with an agentic Playwright E2E 
 - `apps/api` contains the Express API.
 - `e2e/acceptance` contains in-sprint Jira story acceptance plans and generated Playwright tests.
 - `e2e/regression` contains durable QA regression tests.
-- `e2e/shared` contains shared fixtures and test data setup helpers.
+- `e2e/shared` contains shared fixtures, page objects (`e2e/shared/pages/`), seed helpers, and utilities.
 
 ## Run The App
 
@@ -57,7 +57,14 @@ QA_BASE_URL=https://qa.example.com npm run test:regression
 
 Use `e2e-test-orchestrator` as the main entry point for E2E work.
 
-File: `.github/agents/e2e-test-orchestrator.agent.md`
+File: `.claude/agents/e2e-test-orchestrator.md`
+
+Invoke it in Claude Code by typing `@.claude/agents/e2e-test-orchestrator.md` followed by your request — for example:
+
+```
+@.claude/agents/e2e-test-orchestrator.md SCRUM-42
+@.claude/agents/e2e-test-orchestrator.md run npx playwright test --config=e2e/acceptance/playwright.config.js
+```
 
 The orchestrator decides whether the request is acceptance or regression work, then routes to the correct specialist.
 
@@ -65,7 +72,7 @@ The orchestrator decides whether the request is acceptance or regression work, t
 
 - `e2e-test-orchestrator`: main router for all E2E work.
 - `acceptance-planner`: fetches Jira details, applies user-story test-case conventions, checks changed code, maps source-grounded locators, and writes an acceptance plan.
-- `acceptance-generator`: converts an acceptance markdown plan into Playwright `.spec.ts` tests.
+- `acceptance-generator`: converts an acceptance markdown plan into Playwright `.spec.js` tests.
 - `acceptance-healer`: repairs failing in-sprint acceptance tests without silently replacing missing `data-testid` locators.
 - `regression-healer`: runs and repairs QA regression tests, opening PRs for fixes instead of committing directly.
 
@@ -75,8 +82,8 @@ The `playwright-test-planner`, `playwright-test-generator`, and `playwright-test
 
 - `test-case-generator-user-stories`: converts Jira user stories and acceptance criteria into traceable, prioritized BDD-style test cases.
 - `source-grounded-locators`: requires locators to be grounded in actual React source and the repo's `data-testid` usage.
-- `playwright-e2e`: general Playwright test authoring guidance for specs, assertions, fixtures, and debugging.
-- `playwright-cli`: Playwright CLI usage for live browser validation.
+- `playwright-e2e`: Playwright industry standards for Page Object Model, specs, assertions, fixtures, configuration, common scenarios, anti-patterns, and debugging.
+- `playwright-cli`: Playwright CLI usage for live browser validation. Used as a fallback when locators cannot be derived from static React source — for example, when a button label is fetched from an API at runtime, rendered by a third-party component, or inside a shadow DOM. The healer uses this skill to inspect the live DOM and discover the correct locator before writing a `getByRole` or `getByText` fallback.
 - `promote-to-regression`: promotes shipped acceptance coverage into the QA regression suite.
 
 ## Acceptance Workflow
@@ -102,29 +109,46 @@ Regression coverage is usually promoted from acceptance after the story ships to
 1. Use the `promote-to-regression` skill.
 2. Copy the accepted plan and test from `e2e/acceptance` into `e2e/regression`.
 3. Run `npm run test:regression` with `QA_BASE_URL` set.
-4. If tests fail, `regression-healer` repairs the suite and opens a PR.
+4. If tests fail, `regression-healer` repairs the suite and prepares the changes for PR review.
 
 There are no separate `regression-planner` or `regression-generator` agents in this setup. Regression is intentionally maintained through promotion plus healing.
+
+## Troubleshooting
+
+### Jira ticket fetch fails in acceptance-planner
+
+The `acceptance-planner` agent fetches story details via the `atlassian-rovo-mcp` MCP server. Common mistakes that cause it to fail:
+
+- **Wrong parameter name** — the tool expects `issueIdOrKey` (e.g. `"SCRUM-5"`), not a URL and not `cloudId`. Always list available MCP tools first to confirm the exact parameter schema before calling.
+- **Passing a `cloudId`** — the MCP server at `https://mcp.atlassian.com/v1/mcp/authv2` handles auth and `cloudId` internally. Do not pass it unless the tool schema explicitly requires it.
+- **Passing a full Jira URL** — extract only the issue key (e.g. `SCRUM-5`) before calling the tool.
+
+If the MCP call fails after one retry, check the MCP connection in `.vscode/mcp.json` or paste the ticket details manually into the chat before asking the planner to continue.
 
 ## MCP Configuration
 
 MCP servers are configured in `.vscode/mcp.json`.
 
-Configured servers:
+Configured server:
 
-- `playwright-test`
-- `jira`
-- `github`
+- `atlassian-rovo-mcp`
 
-The Jira MCP server expects:
+This server is launched with:
 
-- `JIRA_URL`
-- `JIRA_USERNAME`
-- `JIRA_API_TOKEN`
-
-The GitHub MCP server expects:
-
-- `GITHUB_PERSONAL_ACCESS_TOKEN`
+```json
+{
+  "servers": {
+    "atlassian-rovo-mcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@latest",
+        "https://mcp.atlassian.com/v1/mcp/authv2"
+      ]
+    }
+  }
+}
+```
 
 After changing `.vscode/mcp.json`, reload or restart the MCP client so the new servers are available to the agents.
 

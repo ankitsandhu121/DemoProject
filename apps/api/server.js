@@ -29,6 +29,9 @@ app.post('/api/reset', (req, res) => {
   res.json({ ok: true });
 });
 
+// Returns UI config — label is set server-side so it can't be derived from JSX
+app.get('/api/config', (req, res) => res.json({ submitLabel: 'Save task' }));
+
 app.get('/api/tasks', requireAuth, (req, res) => res.json(tasks));
 
 app.post('/api/tasks', requireAuth, (req, res) => {

@@ -1,11 +1,14 @@
-import { defineConfig } from '@playwright/test';
+const { defineConfig } = require('@playwright/test');
 
-export default defineConfig({
+module.exports = defineConfig({
   testDir: './tests',
+  forbidOnly: !!process.env.CI,
   use: {
     baseURL: process.env.QA_BASE_URL,
     testIdAttribute: 'data-testid',
     trace: 'retain-on-failure',
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
   },
   retries: 2,
   fullyParallel: true,
