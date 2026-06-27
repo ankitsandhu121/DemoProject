@@ -145,20 +145,19 @@ test.describe('Login functionality', () => {
 
 ## Selector Strategy
 
-Use selector priority from `source-grounded-locators` when React source exists in this repo. That means stable `data-testid` values found in source usually win.
-
-General selector priority:
-
-1. `getByTestId()` when source-grounded stable test ids exist.
-2. `getByRole()` with accessible name.
-3. `getByLabel()` for labeled inputs.
-4. `getByPlaceholder()` only when there is no label and no stable test id.
-5. `getByText()` for user-visible non-interactive text.
-6. CSS or XPath only as a documented last resort.
+**The canonical locator priority ladder lives in `source-grounded-locators` (step 2).** Do not
+restate or fork it here — follow that single list so every skill and agent stays consistent. In
+short: stable `data-testid` values found in source usually win, and CSS/XPath is a flagged last
+resort.
 
 Never silently use `.nth()` to work around duplicate test ids. Flag duplicate test ids for the developer.
 
-When an element has no stable `data-testid` in the dev source, do not add one to the app — follow the fallback in `source-grounded-locators`: discover the locator from the live DOM with the Playwright CLI (`playwright-cli` skill), apply the priority order above, and leave a TODO for the missing test id. Never edit `apps/web/**` or `apps/api/**` to create a locator.
+When an element has no stable `data-testid` in the dev source, do not add one to the app. A
+fallback is a **first-class locator**, not a hack: follow the fallback strategy in
+`source-grounded-locators` (step 3) — prefer a stable `data-testid` anchor with a scoped role/text
+child, use a regex accessible-name for dynamic/runtime labels, discover it from the live DOM with
+the Playwright CLI (`playwright-cli` skill), and leave a `TODO` for the missing test id. Never edit
+`apps/web/**` or `apps/api/**` to create a locator.
 
 ## Assertions
 

@@ -28,7 +28,7 @@ You plan acceptance tests for exactly one Jira ticket per invocation.
    grep -rn "data-testid" apps/web/src/
    ```
 7. Build positive, negative, boundary, equivalence, and risk-prioritized test cases with a traceability matrix back to the acceptance criteria, following the format from `test-case-generator-user-stories`.
-8. Use `npx playwright test --headed` or `playwright-cli` (via `Bash`) only for confirming that candidate locators resolve uniquely — not for open-ended exploration. When an element has no `data-testid` in the dev source, do not invent one and do not edit app code: use the Playwright CLI to derive a fallback locator following the `source-grounded-locators` priority order, and record it with a TODO. **Never edit `apps/web/**` or `apps/api/**` to create a locator.**
+8. Use `npx playwright test --headed` or `playwright-cli` (via `Bash`) only for confirming that candidate locators resolve uniquely — not for open-ended exploration. When an element has no `data-testid` in the dev source, do not invent one and do not edit app code: use the Playwright CLI to derive a **first-class fallback** locator per `source-grounded-locators` (step 3) — prefer a stable `data-testid` anchor with a scoped role/text child, use a regex accessible-name for dynamic/runtime labels — and record it with a TODO. Treat a well-built fallback as durable coverage, not a workaround. **Never edit `apps/web/**` or `apps/api/**` to create a locator.**
 9. Write the plan to `e2e/acceptance/specs/{TICKET-ID}-{slug}.md`. The file must include:
    - A traceability matrix from test cases to acceptance criteria
    - Prioritized BDD-style test cases (`P0`, `P1`, `P2`)

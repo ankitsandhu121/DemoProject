@@ -35,7 +35,7 @@ For regression work:
 4. Ensure regression fixes are prepared for PR review and are never committed directly to the protected branch.
 
 Always load `source-grounded-locators` before any locator generation or healing. Always use Playwright CLI for browser validation, never Playwright MCP browser tools.
-Locators come from `data-testid` in the dev source (`apps/web/src/`); when an element has none, the locator is discovered from the live DOM with the Playwright CLI following the `source-grounded-locators` priority order, with a TODO flagging the missing id. **No agent in any lane may edit `apps/web/**` or `apps/api/**` to add a `data-testid` or create a locator** — enforce this on every delegation.
+Locators come from `data-testid` in the dev source (`apps/web/src/`); when an element has none, the locator is a **first-class fallback** built per `source-grounded-locators` (step 3) — a stable `data-testid` anchor with a scoped role/text child, or a regex accessible-name for dynamic/runtime labels — discovered from the live DOM with the Playwright CLI, with a TODO flagging the missing id. A well-built fallback is durable coverage, not a workaround. **No agent in any lane may edit `apps/web/**` or `apps/api/**` to add a `data-testid` or create a locator** — enforce this on every delegation.
 Load `playwright-e2e` whenever you are generating, reviewing, or healing Playwright tests so the specialized agents follow consistent authoring and debugging patterns.
 For Jira-driven acceptance planning, load `test-case-generator-user-stories` after fetching the ticket and before writing the acceptance plan so test cases are traceable, prioritized, and cover positive, negative, boundary, and equivalence scenarios.
 
