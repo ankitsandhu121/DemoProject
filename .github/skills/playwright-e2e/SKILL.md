@@ -71,6 +71,28 @@ Rules:
 4. Keep assertions close to user-visible behavior. Page objects may expose expectation helpers when they represent stable page-level outcomes.
 5. Use source-grounded locators from `source-grounded-locators` inside page objects.
 
+### Reuse before create
+
+Before authoring any page object, locator, method, or fixture, inventory what the
+suite already has (`e2e/shared/pages/`, `e2e/shared/fixtures/`, `e2e/shared/utils/`,
+and existing specs in the lane). Then apply this ladder:
+
+1. **Reuse** — if an existing page object/fixture/util already covers it, import and
+   use it. Never re-declare a locator (`getByTestId(...)`) inline in a spec when a
+   page object already exposes it; never re-implement setup that a fixture/util
+   already provides (`LoginPage.login`, `seed.base.js` `resetTestData`/`getApiBaseURL`,
+   `fixtures/auth.js` `demoUser`).
+2. **Extend** — if it covers most of the need, add the missing method/locator to the
+   existing page object file. Do not spin up a second page object for the same page.
+3. **Create** — only when nothing existing matches. New page objects go under
+   `e2e/shared/pages/` as `.page.js`.
+
+Also: **extract repeated inline interactions** (e.g. cross-page `nav-*` clicks) into
+a shared component page object (e.g. `nav.page.js`) and reuse it across specs instead
+of duplicating the steps. And **conform to the repo's existing conventions** —
+class-based POM, `require`/CommonJS, `.page.js` naming, comment-header locator-source
+notes — rather than introducing a second style.
+
 Base page pattern:
 
 ```javascript

@@ -1,30 +1,36 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import LoginForm from './components/LoginForm';
-import AddTaskForm from './components/AddTaskForm';
-import TaskList from './components/TaskList';
-import { addTask, deleteTask, fetchTasks, toggleTask } from './api';
+import NavBar from './components/NavBar';
+import { AuthContext } from './auth';
+import TasksPage from './pages/TasksPage';
+import ProjectsPage from './pages/ProjectsPage';
+import NewProjectWizard from './pages/NewProjectWizard';
+import TeamPage from './pages/TeamPage';
+import SettingsPage from './pages/SettingsPage';
 
 export default function App() {
   const [token, setToken] = useState(null);
-  const [tasks, setTasks] = useState([]);
-
-  useEffect(() => {
-    if (token) fetchTasks(token).then(setTasks);
-  }, [token]);
 
   if (!token) {
     return <LoginForm onLogin={setToken} />;
   }
 
   return (
-    <div className="app" data-testid="dashboard">
-      <h1>My tasks</h1>
-      <AddTaskForm onAdd={async (title) => setTasks(await addTask(token, title))} />
-      <TaskList
-        tasks={tasks}
-        onToggle={async (id) => setTasks(await toggleTask(token, id))}
-        onDelete={async (id) => setTasks(await deleteTask(token, id))}
-      />
-    </div>
+    <AuthContext.Provider value={{ token, logout: () => setToken(null) }}>
+      <div className="app-shell" data-testid="app-shell">
+        <NavBar />
+        <main className="app-content">
+          <Routes>
+            <Route path="/" element={<Navigate to="/tasks" replace />} />
+            <Route path="/tasks" element={<TasksPage />} />
+            <Route path="/projects" element={<ProjectsPage />} />
+            <Route path="/projects/new" element={<NewProjectWizard />} />
+            <Route path="/team" element={<TeamPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+          </Routes>
+        </main>
+      </div>
+    </AuthContext.Provider>
   );
 }

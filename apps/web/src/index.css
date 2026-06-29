@@ -1,0 +1,247 @@
+:root {
+  --bg: #f5f6f8;
+  --panel: #ffffff;
+  --border: #d9dce1;
+  --text: #1f2430;
+  --muted: #6b7280;
+  --primary: #2563eb;
+  --danger: #dc2626;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+button {
+  cursor: pointer;
+  font: inherit;
+}
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+/* --- App shell + nav --- */
+.app-shell {
+  min-height: 100vh;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+}
+
+.navbar-brand {
+  font-weight: 700;
+}
+
+.navbar-links {
+  display: flex;
+  gap: 1rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-links a.active {
+  font-weight: 700;
+  border-bottom: 2px solid var(--primary);
+}
+
+.navbar-logout {
+  margin-left: auto;
+}
+
+.app-content {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+/* --- Forms / buttons --- */
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 0.9rem;
+}
+
+.btn-secondary {
+  background: #e5e7eb;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 0.9rem;
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem 0.8rem;
+}
+
+input,
+select,
+textarea {
+  font: inherit;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+label {
+  display: block;
+  margin: 0.6rem 0 0.2rem;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.form-error,
+[role='alert'] {
+  color: var(--danger);
+}
+
+/* --- Data table --- */
+.search-input {
+  width: 100%;
+  margin: 0.75rem 0;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--panel);
+}
+
+.data-table th,
+.data-table td {
+  text-align: left;
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.sort-header {
+  background: none;
+  border: none;
+  font-weight: 700;
+  padding: 0;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+
+/* --- Members --- */
+.member-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.member-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.member-role {
+  color: var(--muted);
+}
+
+.member-row .btn-danger {
+  margin-left: auto;
+}
+
+/* --- Modal --- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal {
+  background: var(--panel);
+  border-radius: 10px;
+  padding: 1.5rem;
+  max-width: 380px;
+  width: 90%;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+/* --- Toast --- */
+.toast {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  background: var(--text);
+  color: #fff;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+}
+
+/* --- Wizard --- */
+.wizard-steps {
+  display: flex;
+  gap: 1rem;
+  list-style: none;
+  padding: 0;
+}
+
+.wizard-steps .current {
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.wizard-actions,
+.settings-form button[type='submit'] {
+  margin-top: 1rem;
+}
+
+.wizard-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+/* --- Login (kept minimal) --- */
+.login-form {
+  max-width: 320px;
+  margin: 4rem auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  background: var(--panel);
+  padding: 1.5rem;
+  border-radius: 10px;
+}
